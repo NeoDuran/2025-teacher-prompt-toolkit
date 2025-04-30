@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 프롬프트 파일 불러오기
     async function fetchPrompt(topicId) {
-        // 시도할 경로 목록
+        // 시도할 경로 목록 (파일 이름 그대로 사용)
         const paths = [
             `/연구년프롬프트모음/prompt${topicId}.json`,
             `연구년프롬프트모음/prompt${topicId}.json`,
@@ -22,8 +22,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // 각 경로를 시도
         for (const path of paths) {
             try {
+                console.log(`파일 로드 시도: ${path}`);
                 const response = await fetch(path);
                 if (response.ok) {
+                    console.log(`${path} 로드 성공`);
                     return await response.json();
                 }
             } catch (error) {
@@ -51,20 +53,28 @@ document.addEventListener('DOMContentLoaded', function() {
         promptTitle.textContent = '프롬프트 불러오는 중...';
         promptText.innerHTML = '<p class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></p>';
         
-        const data = await fetchPrompt(selectedTopic);
-        
-        if (data) {
+        try {
+            // 선택한 옵션의 텍스트로 제목 설정
             const selectedOption = topicDropdown.options[topicDropdown.selectedIndex];
             promptTitle.textContent = selectedOption.textContent;
             
-            // 프롬프트 텍스트 표시
-            const promptContent = data.Optimised_Prompt;
-            currentPrompt = promptContent;
+            // 파일 이름은 그대로 선택된 값 사용 (prompt1.json, prompt2.json 등)
+            const data = await fetchPrompt(selectedTopic);
             
-            // 프롬프트 내용을 마크다운 형식으로 표시
-            const formattedPrompt = promptContent.replace(/\n/g, '<br>');
-            promptText.innerHTML = `<pre class="mb-0"><code>${formattedPrompt}</code></pre>`;
-        } else {
+            if (data) {
+                // 전체 JSON 데이터를 문자열로 변환 (들여쓰기 포함)
+                const jsonString = JSON.stringify(data, null, 2);
+                currentPrompt = jsonString;
+                
+                // JSON 형식 그대로 표시
+                promptText.innerHTML = `<pre class="mb-0 overflow-auto"><code>${jsonString}</code></pre>`;
+                
+                console.log(`프롬프트 ${selectedTopic} 로드 완료`);
+            } else {
+                throw new Error('데이터를 불러올 수 없습니다.');
+            }
+        } catch (error) {
+            console.error('프롬프트 로드 오류:', error);
             promptTitle.textContent = '오류 발생';
             promptText.innerHTML = `
                 <p class="text-center text-danger mb-4">
@@ -73,7 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </p>
                 <p class="text-center">
                     JSON 파일 경로가 올바른지 확인해주세요.<br>
-                    '연구년프롬프트모음' 폴더가 웹 서버의 루트 디렉토리에 있어야 합니다.
+                    '연구년프롬프트모음' 폴더가 웹 서버의 루트 디렉토리에 있어야 합니다.<br>
+                    <span class="text-danger">오류 내용: ${error.message}</span>
                 </p>
             `;
         }

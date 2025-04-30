@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 학습연구년 교사를 위한 맞춤형 프롬프트 툴킷</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+    <style>
+        :root {
+            --primary-color: #3f72af;
+            --secondary-color: #112d4e;
+            --accent-color: #f9f7f7;
+            --text-color: #333;
+            --light-gray: #dbe2ef;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2.5rem 0;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2.5rem;
+        }
+        
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            word-break: keep-all;
+            line-height: 1.3;
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+        
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .left-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 700px;
+        }
+        
+        .prompt-display {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .prompt-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .prompt-content {
+            background-color: var(--light-gray);
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            flex-grow: 1;
+            min-height: 500px;
+        }
+        
+        .topic-selector {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .info-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+            flex-grow: 1;
+        }
+        
+        select.form-select {
+            border-radius: 10px;
+            padding: 12px;
+            border: 2px solid var(--light-gray);
+            font-size: 1rem;
+        }
+        
+        .btn-copy {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 15px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-copy:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .left-panel, .right-panel {
+                min-height: auto;
+            }
+            
+            .prompt-display {
+                margin-top: 20px;
+                min-height: 500px;
+            }
+            
+            .prompt-content {
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container text-center">
+            <h1 class="main-title">2025 학습연구년 교사를 위한<br class="d-md-none"> 맞춤형 프롬프트 툴킷</h1>
+            <p class="lead">연구보고서 작성에 도움이 되는 맞춤형 프롬프트를 확인하고 활용하세요</p>
+        </div>
+    </header>
+    
+    <main class="container mb-5">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="left-panel">
+                    <div class="topic-selector mb-4">
+                        <h3 class="mb-3"><i class="bi bi-list-check me-2"></i>연구 주제 선택</h3>
+                        <select id="topic-dropdown" class="form-select mb-3">
+                            <option value="" selected disabled>연구 주제를 선택하세요</option>
+                            <option value="1">현장중심 교육시책 수립을 위한 교육정책 분석·개발 연구</option>
+                            <option value="2">초등 공동교육과정 운영 방안 연구</option>
+                            <option value="3">IB 프로그램(PYP) 현장 적용 방안 연구</option>
+                            <option value="4">초등 저학년 기초학습생활습관에 관한 연구</option>
+                            <option value="5">좋은 습관 형성을 위한 유치원 교육활동 연구</option>
+                            <option value="6">미술영재 교육과정 기관 운영에 관한 연구</option>
+                            <option value="7">중학교 학교자율시간 과목 설계 및 교육학습자료 개발</option>
+                            <option value="8">깊이 있는 학습과 학생 참여형 수업 활성화를 위한 교수·학습자료 개발</option>
+                            <option value="9">IB 프로그램(MYP, DP) 현장 적용 방안 연구</option>
+                            <option value="10">학생의 성취와 성장을 돕는 학생평가 방안 연구</option>
+                            <option value="11">학교급 전환기 수학 학습 지원 강화 프로그램 개발 연구</option>
+                            <option value="12">장애영유아 조기발견을 위한 교육적 진단 역량 강화</option>
+                            <option value="13">개정 교육과정 연계 실천 중심의 학교환경교육 프로그램 개발</option>
+                            <option value="14">교원의 인성교육 지도 역량 강화 연수 프로그램 개발</option>
+                            <option value="15">독서교육자료집 개발</option>
+                            <option value="16">디지털 성폭력(딥페이크 등) 예방교육 자료 개발</option>
+                            <option value="17">긍정적 행동지원 기반 통합교육</option>
+                            <option value="18">국내외 주요 교육정책 이슈와 동향 분석</option>
+                        </select>
+                        
+                        <div class="d-grid gap-2">
+                            <button id="show-prompt" class="btn btn-primary">프롬프트 확인하기</button>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4><i class="bi bi-lightbulb me-2 text-warning"></i>사용 안내</h4>
+                        <ol class="ps-3">
+                            <li>왼쪽 드롭다운에서 연구 주제를 선택하세요.</li>
+                            <li>"프롬프트 확인하기" 버튼을 클릭하면 오른쪽에 해당 주제의 프롬프트가 표시됩니다.</li>
+                            <li>"복사하기" 버튼을 눌러 프롬프트를 복사하여 AI 도구에 붙여넣을 수 있습니다.</li>
+                            <li>각 프롬프트는 연구보고서 작성을 위한 세부 지침과 구성 요소를 포함하고 있습니다.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-8">
+                <div class="right-panel">
+                    <div class="prompt-display">
+                        <div class="prompt-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3 id="prompt-title">선택된 프롬프트가 여기에 표시됩니다</h3>
+                                <button id="copy-button" class="btn btn-copy">
+                                    <i class="bi bi-clipboard me-1"></i> 복사하기
+                                </button>
+                            </div>
+                        </div>
+                        <div class="prompt-content">
+                            <div id="prompt-text" class="mt-3">
+                                <p class="text-center text-muted">
+                                    <i class="bi bi-arrow-left-circle fs-1"></i><br>
+                                    왼쪽에서 연구 주제를 선택하고 '프롬프트 확인하기' 버튼을 클릭하세요.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <div class="container text-center">
+            <p>© 2024 2025 학습연구년 교사를 위한 맞춤형 프롬프트 툴킷 | 교사 연구 활동 지원</p>
+            <p class="small">AI 도구를 활용한 연구보고서 작성에 도움이 되는 프롬프트를 제공합니다.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
